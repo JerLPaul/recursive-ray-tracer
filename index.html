@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="webgl.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+      integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+      crossorigin="anonymous" defer>
+    </script>
+    <script src="loaddata.js" defer></script>
+
+    <title>Ray traced Image</title>
+
+  </head>
+
+  <body>
+
+    <input id="in" type="file" onchange="readFile(this)" multiple>
+
+    <canvas class="myCanvas"></canvas>
+
+
+
+    <script>
+
+    function readFile(input) {
+      let promises = [];
+      let files = input.files;
+      let sceneFile = null;
+      let objFile = null;
+      
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        let promise = new Promise(resolve => {
+          let reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = () => resolve([file.name.split(".").pop(), reader.result]);
+        });
+        promises.push(promise); 
+      }
+
+      Promise.all(promises).then((content) => {
+        for (let i = 0; i < content.length; i++) {
+            if (content[i][0] === "txt") {
+                sceneFile = content[i][1];
+            }
+            else if (content[i][0] === "obj") {
+                objFile = content[i][1];
+            }
+        }
+        if (sceneFile) {
+            draw_scene(sceneFile, objFile || null);
+        }
+
+        loaded = true;
+      });
+    }
+
+    let input = document.getElementById("in");
+    input.addEventListener("change", function() {
+      this.value = null;
+    });
+
+
+    </script>
+
+  </body>
+
+</html>
